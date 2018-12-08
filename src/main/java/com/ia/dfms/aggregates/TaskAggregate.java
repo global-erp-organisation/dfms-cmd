@@ -3,7 +3,7 @@ package com.ia.dfms.aggregates;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.axonframework.modelling.command.AggregateIdentifier;
+import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.beans.factory.annotation.Autowired;

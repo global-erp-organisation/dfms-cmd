@@ -7,8 +7,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotEmpty;
 
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
-
+import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import com.ia.dfms.enums.RequestStatus;
 
 import lombok.AllArgsConstructor;

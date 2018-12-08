@@ -3,7 +3,7 @@ package com.ia.dfms.aggregates;
 import java.util.Collections;
 import java.util.Map;
 
-import org.axonframework.modelling.command.AggregateIdentifier;
+import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import lombok.EqualsAndHashCode;

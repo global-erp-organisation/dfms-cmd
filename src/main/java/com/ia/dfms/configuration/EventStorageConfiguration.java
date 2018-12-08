@@ -28,9 +28,8 @@ public class EventStorageConfiguration {
 
     @Bean
     EventStore eventStore(EventStorageEngine eventStorageEngine) {
-        //return new EmbeddedEventStore(eventStorageEngine);
-       return EmbeddedEventStore.builder().storageEngine(eventStorageEngine).build();
-    }
+       return new EmbeddedEventStore(eventStorageEngine);
+     }
 
     @Bean
     public MongoTemplate template(MongoClient client) {

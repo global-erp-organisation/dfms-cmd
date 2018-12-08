@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.commandhandling.model.AggregateIdentifier;
+import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.eventsourcing.EventSourcingHandler;
-import org.axonframework.modelling.command.AggregateIdentifier;
-import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import com.ia.dfms.commands.creation.CompanyCreationCmd;
@@ -16,7 +16,7 @@ import com.ia.dfms.commands.update.CompanyUpdateCmd;
 import com.ia.dfms.events.creation.CompanyCreatedEvent;
 import com.ia.dfms.events.deletion.CompanyDeletedEvent;
 import com.ia.dfms.events.update.CompanyUpdatedEvent;
-import com.ia.dfms.util.EventsChecker;
+import com.ia.dfms.util.AggregateUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,7 +38,11 @@ public class CompanyAggregate {
 
     @CommandHandler
     public CompanyAggregate(CompanyCreationCmd cmd) {
-        AggregateLifecycle.apply(CompanyCreatedEvent.builder().details(cmd.getDetails()).id(cmd.getId()).name(cmd.getName()).build());
+        AggregateLifecycle.apply(CompanyCreatedEvent.builder()
+                .details(cmd.getDetails())
+                .id(cmd.getId())
+                .name(cmd.getName())
+                .build());
     }
 
     @EventSourcingHandler
@@ -50,7 +54,9 @@ public class CompanyAggregate {
 
     @CommandHandler
     public void handleCompanyDeletion(CompanyDeletionCmd cmd) {
-        AggregateLifecycle.apply(CompanyDeletedEvent.builder().companyId(cmd.getCompanyId()).build());
+        AggregateLifecycle.apply(CompanyDeletedEvent.builder()
+                .companyId(cmd.getCompanyId())
+                .build());
     }
 
     @EventSourcingHandler
@@ -60,14 +66,12 @@ public class CompanyAggregate {
     }
 
     @CommandHandler
-    public void hanldeCompanyUpdate(CompanyUpdateCmd cmd, EventsChecker<CompanyCreatedEvent> checker) {
-        final Optional<CompanyCreatedEvent> event = checker.latestEvent(cmd.getId());
+    public void hanldeCompanyUpdate(CompanyUpdateCmd cmd, AggregateUtil checker) {
+        final Optional<CompanyAggregate> event = checker.aggregateGet(cmd.getId(), CompanyAggregate.class);
         if (event.isPresent()) {
             AggregateLifecycle.apply(CompanyUpdatedEvent.builder()
                     .details(cmd.getDetails())
-                    .name(cmd.getName())
-                    .id(cmd.getId())
-                    .build());
+                    .name(cmd.getName()).id(cmd.getId()).build());
             log.info("The update of the Company with id [{}] have been successfully executed", cmd.getId());
         }
         log.info("The update of the Company with id [{}] have been ignored. cause aggregate not found in the event storage", cmd.getId());

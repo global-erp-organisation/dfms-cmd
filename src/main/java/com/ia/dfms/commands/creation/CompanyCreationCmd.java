@@ -4,28 +4,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
+import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import org.springframework.util.StringUtils;
 
-import com.ia.dfms.validors.Validator;
+import com.ia.dfms.validors.CommandValidator;
 
 import io.netty.util.internal.StringUtil;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class CompanyCreationCmd  implements Validator<List<String>, CompanyCreationCmd>{
+@Value
+@EqualsAndHashCode(callSuper = false)
+public class CompanyCreationCmd  extends CommandValidator<List<String>, CompanyCreationCmd>{
     @TargetAggregateIdentifier
-    private String id;
-    private String name;
+    String id;
+    String name;
     @Builder.Default
-    private Map<String, Object> details = Collections.emptyMap();
+    Map<String, Object> details = Collections.emptyMap();
     
     public static CompanyCreationCmdBuilder from(CompanyCreationCmd cmd) {
         return CompanyCreationCmd.builder()
@@ -43,6 +44,6 @@ public class CompanyCreationCmd  implements Validator<List<String>, CompanyCreat
         if(StringUtil.isNullOrEmpty(name)) {
             errors.add("Company name shouldn't be null or empty");
         }
-       return build(errors, this, errors.isEmpty());
+       return build(errors, Optional.of(this), errors.isEmpty());
     }
 }
