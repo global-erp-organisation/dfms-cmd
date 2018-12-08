@@ -1,0 +1,18 @@
+axon:
+  events:
+    database: dfms-events
+  amqp:
+    exchange: user.out.exchange
+    durable-messages: true
+    transaction-mode: none
+external:
+  amqp:
+    bind:
+      route-key: '*'
+    queue: dfms.event.queue
+    
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: dfms-cmd
