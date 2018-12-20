@@ -7,7 +7,6 @@ import java.util.Optional;
 import javax.validation.constraints.NotEmpty;
 
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.ia.dfms.aggregates.CompanyAggregate;
@@ -30,10 +29,6 @@ public class ArtifactCreationCmd extends CommandValidator<List<String>, Artifact
     String uri;
     @NotEmpty(message = "CompanyId shouldn't be null or empty")
     String companyId;
-
-    @Autowired
-    AggregateUtil util;
-
     public static ArtifactCreationCmdBuilder from(ArtifactCreationCmd cmd) {
         return ArtifactCreationCmd.builder()
                 .companyId(cmd.getCompanyId())
@@ -61,7 +56,7 @@ public class ArtifactCreationCmd extends CommandValidator<List<String>, Artifact
                 errors.add("The company with id " + companyId + " doesnt exist");
             }
         }
-        return build(errors, Optional.of(this), errors.isEmpty());
+        return buildResult(errors, Optional.of(this), errors.isEmpty());
     }
 
 }

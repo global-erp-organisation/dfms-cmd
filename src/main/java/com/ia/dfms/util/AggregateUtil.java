@@ -1,6 +1,8 @@
 package com.ia.dfms.util;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.axonframework.commandhandling.model.Aggregate;
 import org.axonframework.commandhandling.model.AggregateNotFoundException;
@@ -17,14 +19,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Component
 public class AggregateUtil {
- 
+
     private final EventStore store;
 
     public <T> Optional<T> aggregateGet(String aggregateId, Class<T> clazz) {
         final UnitOfWork<GenericMessage<String>> uow = DefaultUnitOfWork.startAndGet(new GenericMessage<>(aggregateId));
-        final Repository<T> repository = new EventSourcingRepository<T>(clazz, store);
-        try {            
-            final Aggregate<T> aggreagte = repository.load(aggregateId);
+        try {
+            
+            final Aggregate<T> aggreagte = getRepository(clazz).load(aggregateId);
             return Optional.of(aggreagte.invoke(a -> {
                 uow.commit();
                 return a;
@@ -34,4 +36,14 @@ public class AggregateUtil {
             return Optional.empty();
         }
     }
+
+    public <T> Collection<T> aggregateGet(Collection<String> aggregateIds, Class<T> clazz) {
+        return aggregateIds.stream().map(a -> aggregateGet(a, clazz)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+    }
+
+    public <T> Repository<T> getRepository(Class<T> clazz) {
+        return new EventSourcingRepository<>(clazz, store);
+        // EventSourcingRepository.builder(clazz).eventStore(store).build();
+    }
+
 }

@@ -2,12 +2,11 @@ package com.ia.dfms.aggregates;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
-import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import com.ia.dfms.commands.creation.CompanyCreationCmd;
@@ -16,7 +15,7 @@ import com.ia.dfms.commands.update.CompanyUpdateCmd;
 import com.ia.dfms.events.creation.CompanyCreatedEvent;
 import com.ia.dfms.events.deletion.CompanyDeletedEvent;
 import com.ia.dfms.events.update.CompanyUpdatedEvent;
-import com.ia.dfms.util.AggregateUtil;
+import com.ia.dfms.util.EventBuilder;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @NoArgsConstructor
 @Getter
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
 @ToString
 @EqualsAndHashCode
 @Slf4j
@@ -37,12 +36,9 @@ public class CompanyAggregate {
     private Map<String, Object> details = Collections.emptyMap();
 
     @CommandHandler
-    public CompanyAggregate(CompanyCreationCmd cmd) {
-        AggregateLifecycle.apply(CompanyCreatedEvent.builder()
-                .details(cmd.getDetails())
-                .id(cmd.getId())
-                .name(cmd.getName())
-                .build());
+    public CompanyAggregate(CompanyCreationCmd cmd, EventBuilder builder) {
+        AggregateLifecycle.apply(builder.companyCreatedEvent(cmd));
+        log.info("The creation of the Company with id [{}] have been successfully executed", cmd.getId());
     }
 
     @EventSourcingHandler
@@ -50,31 +46,27 @@ public class CompanyAggregate {
         this.id = event.getId();
         this.name = event.getName();
         this.details = this.getDetails();
+        log.info("Creation event of the Company with id [{}] have been successfully send to the event bus", event.getId());
     }
 
     @CommandHandler
     public void handleCompanyDeletion(CompanyDeletionCmd cmd) {
-        AggregateLifecycle.apply(CompanyDeletedEvent.builder()
-                .companyId(cmd.getCompanyId())
-                .build());
+        AggregateLifecycle.apply(CompanyDeletedEvent.builder().companyId(cmd.getCompanyId()).build());
+        log.info("The deletion of the Company with id [{}] have been successfully executed", cmd.getCompanyId());
+
     }
 
     @EventSourcingHandler
     public void onCompanyDeletion(CompanyDeletedEvent event) {
         this.id = event.getCompanyId();
         AggregateLifecycle.markDeleted();
+        log.info("Deletion event of the Company with id [{}] have been successfully send to the event bus", event.getCompanyId());
     }
 
     @CommandHandler
-    public void hanldeCompanyUpdate(CompanyUpdateCmd cmd, AggregateUtil checker) {
-        final Optional<CompanyAggregate> event = checker.aggregateGet(cmd.getId(), CompanyAggregate.class);
-        if (event.isPresent()) {
-            AggregateLifecycle.apply(CompanyUpdatedEvent.builder()
-                    .details(cmd.getDetails())
-                    .name(cmd.getName()).id(cmd.getId()).build());
-            log.info("The update of the Company with id [{}] have been successfully executed", cmd.getId());
-        }
-        log.info("The update of the Company with id [{}] have been ignored. cause aggregate not found in the event storage", cmd.getId());
+    public void hanldeCompanyUpdate(CompanyUpdateCmd cmd, EventBuilder builder) {
+        AggregateLifecycle.apply(builder.companyUpdatedEvent(cmd));
+        log.info("The update of the Company with id [{}] have been successfully executed", cmd.getId());
     }
 
     @EventSourcingHandler
@@ -82,5 +74,6 @@ public class CompanyAggregate {
         this.id = event.getId();
         this.name = event.getName();
         this.details = event.getDetails();
+        log.info("Update event of the Company with id [{}] have been successfully send to the event bus", event.getId());
     }
 }

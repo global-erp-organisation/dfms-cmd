@@ -1,10 +1,17 @@
 axon:
   events:
-    database: dfms-events
+    database: dfms-events-store
+    snapshot-limit: 3
   amqp:
-    exchange: user.out.exchange
+    exchange: dfms.out.exchange
     durable-messages: true
     transaction-mode: none
+  kafka:
+    bootstrap-servers:
+    - localhost:9092
+    default-topic: dfms.event.queue
+  axonserver:
+    servers: localhost:8124
 external:
   amqp:
     bind:
@@ -16,3 +23,8 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: dfms-cmd
+  data:
+    mongodb:
+      database: ${axon.events.database}
+server:
+  port: 8090

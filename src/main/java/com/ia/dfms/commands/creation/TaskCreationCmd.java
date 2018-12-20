@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.ia.dfms.aggregates.ArtifactAggregate;
 import com.ia.dfms.aggregates.CompanyAggregate;
 import com.ia.dfms.util.AggregateUtil;
 import com.ia.dfms.validors.CommandValidator;
@@ -36,7 +39,7 @@ public class TaskCreationCmd extends CommandValidator<List<String>, TaskCreation
     }
 
     @Override
-    protected Result<List<String>, TaskCreationCmd> validate(AggregateUtil util) {
+    public Result<List<String>, TaskCreationCmd> validate(AggregateUtil util) {
         final List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(id)) {
             errors.add("Task identifier shouldn't be null or empty");
@@ -51,6 +54,10 @@ public class TaskCreationCmd extends CommandValidator<List<String>, TaskCreation
                 errors.add("The company with id " + companyId + " doesn't exist");
             }
         }
-        return super.validate(util);
+        if (!CollectionUtils.isEmpty(artifactIds)) {
+            artifactIds.stream().filter(a -> !util.aggregateGet(a, ArtifactAggregate.class).isPresent())
+                    .forEach(a -> errors.add("The artifact with id " + a + " does not exist"));
+        }
+        return buildResult(errors, Optional.of(this), errors.isEmpty());
     }
 }

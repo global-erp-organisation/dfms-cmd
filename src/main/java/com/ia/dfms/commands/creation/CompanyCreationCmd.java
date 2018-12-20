@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import org.springframework.util.StringUtils;
-
 import com.ia.dfms.validors.CommandValidator;
 
 import io.netty.util.internal.StringUtil;
@@ -44,6 +43,6 @@ public class CompanyCreationCmd  extends CommandValidator<List<String>, CompanyC
         if(StringUtil.isNullOrEmpty(name)) {
             errors.add("Company name shouldn't be null or empty");
         }
-       return build(errors, Optional.of(this), errors.isEmpty());
+       return buildResult(errors, Optional.of(this), errors.isEmpty());
     }
 }

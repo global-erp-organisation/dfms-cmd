@@ -30,8 +30,13 @@ public class ResourceHandler implements Handler {
 
     public Mono<ServerResponse> resourceAdd(ServerRequest request) {
         final Mono<ResourceCreationCmd> dto = request.bodyToMono(ResourceCreationCmd.class);
-        final Mono<String> id = dto.map(c -> gateway.sendAndWait(ResourceCreationCmd.from(c).id(UUID.randomUUID().toString()).build()));
-        return ServerResponse.accepted().body(id, String.class);
+        return dto.map(c -> ResourceCreationCmd.from(c)
+                    .id(UUID.randomUUID().toString())
+                    .build()
+                    .validate(util))
+                .flatMap(r -> response(r, gateway))
+                .switchIfEmpty(ServerResponse.badRequest()
+                        .body(Mono.just("Missing request body."), String.class));
     }
 
     public Mono<ServerResponse> requestAdd(ServerRequest request) {
@@ -40,7 +45,9 @@ public class ResourceHandler implements Handler {
                     .id(UUID.randomUUID().toString())
                     .build()
                     .validate(util))
-                .flatMap(r -> response(r, gateway));
+                .flatMap(r -> response(r, gateway))
+                .switchIfEmpty(ServerResponse.badRequest()
+                        .body(Mono.just("Missing request body."), String.class));
     }
 
     public Mono<ServerResponse> artifactAdd(ServerRequest request) {
@@ -49,41 +56,59 @@ public class ResourceHandler implements Handler {
                     .id(UUID.randomUUID().toString())
                     .build()
                     .validate(util))
-                .flatMap(r -> response(r, gateway));
+                .flatMap(r -> response(r, gateway))
+                .switchIfEmpty(ServerResponse.badRequest()
+                        .body(Mono.just("Missing request body."), String.class));
     }
 
     public Mono<ServerResponse> organisationAdd(ServerRequest request) {
         final Mono<CompanyCreationCmd> dto = request.bodyToMono(CompanyCreationCmd.class);
-        return dto.map(c -> CompanyCreationCmd.from(c)
-                    .id(UUID.randomUUID().toString())
-                    .build()
-                    .validate())
-                .flatMap(r -> response(r, gateway));
+         return dto.map(c -> CompanyCreationCmd.from(c)
+                     .id(UUID.randomUUID().toString())
+                     .build()
+                     .validate())
+                .flatMap(r -> response(r, gateway))
+                .switchIfEmpty(ServerResponse.badRequest()
+                        .body(Mono.just("Missing request body."), String.class));
     }
 
     public Mono<ServerResponse> organisationUpdate(ServerRequest request) {
         final Mono<CompanyUpdateCmd> dto = request.bodyToMono(CompanyUpdateCmd.class);
         final String companyId = request.pathVariable("companyId");
         if (companyId == null) {
-            return ServerResponse.badRequest().body(Mono.just("CompanyId is missing as a path variable."), String.class);
+            return ServerResponse.badRequest()
+                    .body(Mono.just("CompanyId is missing as a path variable."), String.class);
         }
-        final Mono<String> id = dto.map(c -> gateway.sendAndWait(CompanyUpdateCmd.from(c).id(companyId).build()));
-        return ServerResponse.accepted().body(id == null ? Mono.empty() : id, String.class);
-
+        return dto.map(c -> CompanyUpdateCmd.from(c)
+                    .id(companyId)
+                    .build()
+                    .validate(util))
+                .flatMap(r -> response(r, gateway))
+                .switchIfEmpty(ServerResponse.badRequest()
+                        .body(Mono.just("Missing request body."), String.class));
     }
 
     public Mono<ServerResponse> organisationDelete(ServerRequest request) {
         final String companyId = request.pathVariable("companyId");
         if (companyId == null) {
-            return ServerResponse.badRequest().body(Mono.just("CompanyId is missing as a path variable."), String.class);
+            return ServerResponse.badRequest()
+                    .body(Mono.just("CompanyId is missing as a path variable."), String.class);
         }
-        final String id = gateway.sendAndWait(CompanyDeletionCmd.builder().companyId(companyId).build());
-        return ServerResponse.accepted().body(id == null ? Mono.empty() : Mono.just(id), String.class);
+        return response(CompanyDeletionCmd.builder()
+                .companyId(companyId)
+                .build()
+                .validate(util), gateway);
     }
 
     public Mono<ServerResponse> taskAdd(ServerRequest request) {
         final Mono<TaskCreationCmd> dto = request.bodyToMono(TaskCreationCmd.class);
-        final Mono<String> id = dto.map(c -> gateway.sendAndWait(TaskCreationCmd.from(c).id(UUID.randomUUID().toString()).build()));
-        return ServerResponse.accepted().body(id, String.class);
+        return dto.map(c -> TaskCreationCmd.from(c)
+                    .id(UUID.randomUUID().toString())
+                    .build()
+                    .validate(util))
+                .flatMap(r -> response(r, gateway))
+                .switchIfEmpty(ServerResponse.badRequest()
+                        .body(Mono.just("Missing request body."), String.class));
     }
+
 }

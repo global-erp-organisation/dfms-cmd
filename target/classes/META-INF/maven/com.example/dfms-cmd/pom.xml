@@ -46,15 +46,13 @@
             <artifactId>spring-cloud-stream-reactive</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.axonframework</groupId>
             <artifactId>axon-spring-boot-starter</artifactId>
             <version>${axonframework-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.axonframework</groupId>
-                    <artifactId>axon-server-connector</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.axonframework</groupId>
@@ -71,8 +69,6 @@
             <artifactId>axon-test</artifactId>
             <version>${axonframework-version}</version>
         </dependency>
-        <!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-devtools</artifactId> 
-            <scope>runtime</scope> </dependency> -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -98,8 +94,12 @@
             <artifactId>dfms-common-lib</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

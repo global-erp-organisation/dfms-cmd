@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "axon.events.database",
+    "type": "java.lang.String",
+    "description": "A description for 'axon.events.database'"
+  },
+  {
+    "name": "external.amqp.bind.route-key",
+    "type": "java.lang.String",
+    "description": "A description for 'external.amqp.bind.route-key'"
+  },
+  {
+    "name": "external.amqp.queue",
+    "type": "java.lang.String",
+    "description": "A description for 'external.amqp.queue'"
+  }
+]}
