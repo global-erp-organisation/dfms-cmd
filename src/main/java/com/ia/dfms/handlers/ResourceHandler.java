@@ -1,8 +1,7 @@
 package com.ia.dfms.handlers;
 
-import java.util.UUID;
-
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -31,7 +30,7 @@ public class ResourceHandler implements Handler {
     public Mono<ServerResponse> resourceAdd(ServerRequest request) {
         final Mono<ResourceCreationCmd> dto = request.bodyToMono(ResourceCreationCmd.class);
         return dto.map(c -> ResourceCreationCmd.from(c)
-                    .id(UUID.randomUUID().toString())
+                    .id(new ObjectId().toHexString())
                     .build()
                     .validate(util))
                 .flatMap(r -> response(r, gateway))
@@ -42,7 +41,7 @@ public class ResourceHandler implements Handler {
     public Mono<ServerResponse> requestAdd(ServerRequest request) {
         final Mono<RequestCreationCmd> dto = request.bodyToMono(RequestCreationCmd.class);
         return dto.map(c -> RequestCreationCmd.from(c)
-                    .id(UUID.randomUUID().toString())
+                    .id(new ObjectId().toHexString())
                     .build()
                     .validate(util))
                 .flatMap(r -> response(r, gateway))
@@ -53,7 +52,7 @@ public class ResourceHandler implements Handler {
     public Mono<ServerResponse> artifactAdd(ServerRequest request) {
         final Mono<ArtifactCreationCmd> dto = request.bodyToMono(ArtifactCreationCmd.class);
         return dto.map(c -> ArtifactCreationCmd.from(c)
-                    .id(UUID.randomUUID().toString())
+                    .id(new ObjectId().toHexString())
                     .build()
                     .validate(util))
                 .flatMap(r -> response(r, gateway))
@@ -64,7 +63,7 @@ public class ResourceHandler implements Handler {
     public Mono<ServerResponse> organisationAdd(ServerRequest request) {
         final Mono<CompanyCreationCmd> dto = request.bodyToMono(CompanyCreationCmd.class);
          return dto.map(c -> CompanyCreationCmd.from(c)
-                     .id(UUID.randomUUID().toString())
+                     .id(new ObjectId().toHexString())
                      .build()
                      .validate())
                 .flatMap(r -> response(r, gateway))
@@ -103,7 +102,7 @@ public class ResourceHandler implements Handler {
     public Mono<ServerResponse> taskAdd(ServerRequest request) {
         final Mono<TaskCreationCmd> dto = request.bodyToMono(TaskCreationCmd.class);
         return dto.map(c -> TaskCreationCmd.from(c)
-                    .id(UUID.randomUUID().toString())
+                    .id(new ObjectId().toHexString())
                     .build()
                     .validate(util))
                 .flatMap(r -> response(r, gateway))

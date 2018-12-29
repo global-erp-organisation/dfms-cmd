@@ -1,4 +1,3 @@
-/Users/martinblaise/projects/sample/dfms/dfms-cmd/src/main/java/com/ia/dfms/handlers/RequestHandler.java
 /Users/martinblaise/projects/sample/dfms/dfms-cmd/src/main/java/com/ia/dfms/commands/creation/TaskCreationCmd.java
 /Users/martinblaise/projects/sample/dfms/dfms-cmd/src/main/java/com/ia/dfms/DfmsCmdApplication.java
 /Users/martinblaise/projects/sample/dfms/dfms-cmd/src/main/java/com/ia/dfms/commands/update/TaskUpdateCmd.java

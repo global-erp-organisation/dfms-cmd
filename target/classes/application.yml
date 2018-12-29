@@ -6,18 +6,11 @@ axon:
     exchange: dfms.out.exchange
     durable-messages: true
     transaction-mode: none
-  kafka:
-    bootstrap-servers:
-    - localhost:9092
-    default-topic: dfms.event.queue
-  axonserver:
-    servers: localhost:8124
 external:
   amqp:
     bind:
       route-key: '*'
     queue: dfms.event.queue
-    
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -26,5 +19,5 @@ spring:
   data:
     mongodb:
       database: ${axon.events.database}
-server:
+ùserver:
   port: 8090

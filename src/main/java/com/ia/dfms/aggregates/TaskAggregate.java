@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.axonframework.commandhandling.CommandHandler;
-import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
+import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import com.ia.dfms.commands.creation.TaskCreationCmd;
@@ -59,7 +59,7 @@ public class TaskAggregate {
 
     @EventSourcingHandler
     public void onTaskUpdated(TaskUpdatedEvent event) {
-        this.id = event.getId();
+        this.id = event.getId().toString();
         this.description = event.getDescription();
         this.companyId = event.getCompanyId();
         this.artifactIds = event.getArtifactIds();
@@ -68,13 +68,13 @@ public class TaskAggregate {
 
     @CommandHandler
     public void handleTaskDeletionCmd(TaskDeletionCmd cmd) {
-        AggregateLifecycle.apply(TaskDeletedEvent.builder().taskId(cmd.getTaskId()).build());
+        AggregateLifecycle.apply(TaskDeletedEvent.builder().id(cmd.getTaskId()).build());
         log.info("The deletion of the request with id [{}] have been successfully executed", cmd.getTaskId());
     }
 
     @EventSourcingHandler
     public void onTaskDeleted(TaskDeletedEvent event) {
-        this.id = event.getTaskId();
+        this.id = event.getId().toString();
         AggregateLifecycle.markDeleted();
     }
 }

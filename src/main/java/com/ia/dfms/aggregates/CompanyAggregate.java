@@ -4,14 +4,15 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.axonframework.commandhandling.CommandHandler;
-import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
+import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import com.ia.dfms.commands.creation.CompanyCreationCmd;
 import com.ia.dfms.commands.deletion.CompanyDeletionCmd;
 import com.ia.dfms.commands.update.CompanyUpdateCmd;
+import com.ia.dfms.enums.DefaultAMQProperties;
 import com.ia.dfms.events.creation.CompanyCreatedEvent;
 import com.ia.dfms.events.deletion.CompanyDeletedEvent;
 import com.ia.dfms.events.update.CompanyUpdatedEvent;
@@ -51,16 +52,20 @@ public class CompanyAggregate {
 
     @CommandHandler
     public void handleCompanyDeletion(CompanyDeletionCmd cmd) {
-        AggregateLifecycle.apply(CompanyDeletedEvent.builder().companyId(cmd.getCompanyId()).build());
+        AggregateLifecycle.apply(CompanyDeletedEvent.builder()
+                .id(id)
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
+                .build()
+                );
         log.info("The deletion of the Company with id [{}] have been successfully executed", cmd.getCompanyId());
 
     }
 
     @EventSourcingHandler
     public void onCompanyDeletion(CompanyDeletedEvent event) {
-        this.id = event.getCompanyId();
+        this.id = event.getId();
         AggregateLifecycle.markDeleted();
-        log.info("Deletion event of the Company with id [{}] have been successfully send to the event bus", event.getCompanyId());
+        log.info("Deletion event of the Company with id [{}] have been successfully send to the event bus", event.getId());
     }
 
     @CommandHandler

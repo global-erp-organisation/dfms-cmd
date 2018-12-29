@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.axonframework.commandhandling.CommandHandler;
-import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
+import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import com.ia.dfms.commands.creation.ResourceCreationCmd;
@@ -63,25 +63,25 @@ public class ResourceAggregate {
 
     @EventSourcingHandler
     public void onResourceUpdated(ResourceUpdatedEvent event) {
-        this.id = event.getId();
+        this.id = event.getId().toString();
         this.description = event.getDescription();
         this.email = event.getEmail();
         this.phoneNumber = event.getPhoneNumber();
         this.details = event.getDetails();
-        this.companyId = event.getCompanyId();
+        this.companyId = event.getCompanyId().toString();
         log.info("Update event of the resource with id [{}] have been successfully send to the event bus", event.getId());
     }
 
     @CommandHandler
     public void handleResourceDeletionCmd(ResourceDeletionCmd cmd) {
-        AggregateLifecycle.apply(ResourceDeletedEvent.builder().resourceId(cmd.getResourceId()).build());
+        AggregateLifecycle.apply(ResourceDeletedEvent.builder().id(cmd.getResourceId()).build());
         log.info("The deletion of the request with id [{}] have been successfully executed", cmd.getResourceId());
     }
 
     @EventSourcingHandler
     public void onResourceDeleted(ResourceDeletedEvent event) {
-        this.id = event.getResourceId();
+        this.id = event.getId().toString();
         AggregateLifecycle.markDeleted();
-        log.info("Deletion event of the resource with id [{}] have been successfully send to the event bus", event.getResourceId());
+        log.info("Deletion event of the resource with id [{}] have been successfully send to the event bus", event.getId());
     }
 }

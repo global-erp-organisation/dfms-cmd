@@ -50,15 +50,15 @@ public class ArtifactAggregate {
 
     @CommandHandler
     public void handleArtifactDeletionCmd(ArtifactDeletionCmd cmd) {
-        AggregateLifecycle.apply(ArtifactDeletedEvent.builder().artifactId(cmd.getArtifactId()).build());
+        AggregateLifecycle.apply(ArtifactDeletedEvent.builder().id(cmd.getArtifactId()).build());
         log.info("Artifact deletion command [{}] succesfully apply.", cmd.getArtifactId());
     }
 
     @EventSourcingHandler
     public void onArtifactDeleted(ArtifactDeletedEvent event) {
-        this.id = event.getArtifactId();
+        this.id = event.getId();
         AggregateLifecycle.markDeleted();
-        log.info("Deletion event of the artifact with id [{}] have been successfully send to the event bus", event.getArtifactId());
+        log.info("Deletion event of the artifact with id [{}] have been successfully send to the event bus", event.getId());
     }
 
     @CommandHandler

@@ -19,14 +19,14 @@ import com.ia.dfms.enums.RequestStatus;
 import com.ia.dfms.util.AggregateUtil;
 import com.ia.dfms.validors.CommandValidator;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
 
 @Data
 @Builder
-@Value
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class RequestCreationCmd extends CommandValidator<List<String>, RequestCreationCmd> {
     @TargetAggregateIdentifier
@@ -41,10 +41,8 @@ public class RequestCreationCmd extends CommandValidator<List<String>, RequestCr
     Collection<String> artifactIds = Collections.emptyList();
 
     public static RequestCreationCmdBuilder from(RequestCreationCmd cmd) {
-        return RequestCreationCmd.builder().id(cmd.getId())
-                .requestDate(cmd.getRequestDate() == null ? LocalDateTime.now() : cmd.getRequestDate())
-                .requestDetails(cmd.getRequestDetails())
-                .requesterId(cmd.getRequesterId()).taskId(cmd.getTaskId()).artifactIds(cmd.getArtifactIds());
+        return RequestCreationCmd.builder().id(cmd.getId()).requestDate(cmd.getRequestDate() == null ? LocalDateTime.now() : cmd.getRequestDate())
+                .requestDetails(cmd.getRequestDetails()).requesterId(cmd.getRequesterId()).taskId(cmd.getTaskId()).artifactIds(cmd.getArtifactIds());
     }
 
     @Override
@@ -56,8 +54,13 @@ public class RequestCreationCmd extends CommandValidator<List<String>, RequestCr
         if (StringUtils.isEmpty(taskId)) {
             errors.add("Task identifier shouldn't be null or empty");
         } else {
-            if (!util.aggregateGet(taskId, TaskAggregate.class).isPresent()) {
+            final Optional<TaskAggregate> a = util.aggregateGet(taskId, TaskAggregate.class);
+            if (!a.isPresent()) {
                 errors.add("The Task with id " + taskId + " doesnt exist");
+            } else {
+                if (CollectionUtils.isEmpty(artifactIds)) {
+                    setArtifactIds(a.get().getArtifactIds());
+                }
             }
         }
         if (requestDate == null) {

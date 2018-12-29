@@ -10,25 +10,31 @@ import org.springframework.util.Assert;
 import com.ia.dfms.aggregates.ArtifactAggregate;
 import com.ia.dfms.aggregates.CompanyAggregate;
 import com.ia.dfms.aggregates.RequestAggregate;
+import com.ia.dfms.aggregates.RequestTrackingAggregate;
 import com.ia.dfms.aggregates.ResourceAggregate;
 import com.ia.dfms.aggregates.TaskAggregate;
 import com.ia.dfms.commands.creation.ArtifactCreationCmd;
 import com.ia.dfms.commands.creation.CompanyCreationCmd;
 import com.ia.dfms.commands.creation.RequestCreationCmd;
+import com.ia.dfms.commands.creation.RequestTrackingCreationCmd;
 import com.ia.dfms.commands.creation.ResourceCreationCmd;
 import com.ia.dfms.commands.creation.TaskCreationCmd;
 import com.ia.dfms.commands.update.ArtifactUpdateCmd;
 import com.ia.dfms.commands.update.CompanyUpdateCmd;
+import com.ia.dfms.commands.update.RequestTrackingUpdateCmd;
 import com.ia.dfms.commands.update.RequestUpdateCmd;
 import com.ia.dfms.commands.update.ResourceUpdateCmd;
 import com.ia.dfms.commands.update.TaskUpdateCmd;
+import com.ia.dfms.enums.DefaultAMQProperties;
 import com.ia.dfms.events.creation.ArtifactCreatedEvent;
 import com.ia.dfms.events.creation.CompanyCreatedEvent;
 import com.ia.dfms.events.creation.RequestCreatedEvent;
+import com.ia.dfms.events.creation.RequestTrackingCreatedEvent;
 import com.ia.dfms.events.creation.ResourceCreatedEvent;
 import com.ia.dfms.events.creation.TaskCreatedEvent;
 import com.ia.dfms.events.update.ArtifactUpdatedEvent;
 import com.ia.dfms.events.update.CompanyUpdatedEvent;
+import com.ia.dfms.events.update.RequestTrackingUpdatedEvent;
 import com.ia.dfms.events.update.RequestUpdatedEvent;
 import com.ia.dfms.events.update.ResourceUpdatedEvent;
 import com.ia.dfms.events.update.TaskUpdatedEvent;
@@ -47,6 +53,7 @@ private final AggregateUtil util;
                 .details(a.getDetails())
                 .id(a.getId())
                 .name(a.getName())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
     
@@ -55,6 +62,7 @@ private final AggregateUtil util;
                 .details(cmd.getDetails())
                 .id(cmd.getId())
                 .name(cmd.getName())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -65,15 +73,17 @@ private final AggregateUtil util;
                 .details(a.getDetails())
                 .id(a.getId())
                 .name(a.getName())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
     
     public  CompanyUpdatedEvent companyUpdatedEvent(CompanyUpdateCmd cmd) {
-        aggregateLoad(cmd.getId(), CompanyAggregate.class);
+        final CompanyAggregate a = aggregateLoad(cmd.getId(), CompanyAggregate.class);
         return CompanyUpdatedEvent.builder()
                 .details(cmd.getDetails())
-                .id(cmd.getId())
+                .id(a.getId())
                 .name(cmd.getName())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -85,6 +95,7 @@ private final AggregateUtil util;
                 .description(a.getDescription())
                 .uri(a.getUri())
                 .id(a.getId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -94,6 +105,7 @@ private final AggregateUtil util;
                 .description(cmd.getDescription())
                 .uri(cmd.getUri())
                 .id(cmd.getId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
     
@@ -106,6 +118,7 @@ private final AggregateUtil util;
                 .details(a.getDetails())
                 .phoneNumber(a.getPhoneNumber())
                 .id(a.getId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -117,17 +130,19 @@ private final AggregateUtil util;
                 .email(cmd.getEmail())
                 .details(cmd.getDetails())
                 .phoneNumber(cmd.getPhoneNumber())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
     public  ResourceUpdatedEvent resourceUpdatedEvent(String id) {
         final ResourceAggregate a = aggregateLoad(id, ResourceAggregate.class);
          return ResourceUpdatedEvent.builder()
-                .companyId(a.getCompanyId())
+                 .companyId(a.getCompanyId())
                 .description(a.getDescription())
                 .email(a.getEmail())
                 .details(a.getDetails())
                 .phoneNumber(a.getPhoneNumber())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .id(a.getId())
                 .build();
     }
@@ -135,11 +150,12 @@ private final AggregateUtil util;
     public  ResourceUpdatedEvent resourceUpdatedEvent(ResourceUpdateCmd cmd) {
         final ResourceAggregate a = aggregateLoad(cmd.getId(), ResourceAggregate.class);
          return ResourceUpdatedEvent.builder()
-                .companyId(a.getCompanyId())
+                 .companyId(a.getCompanyId())
                 .description(a.getDescription())
                 .email(a.getEmail())
                 .details(a.getDetails())
                 .phoneNumber(a.getPhoneNumber())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .id(a.getId())
                 .build();
     }
@@ -148,10 +164,11 @@ private final AggregateUtil util;
     public  ArtifactUpdatedEvent artifactUpdatedEvent(String id) {
         final ArtifactAggregate a = aggregateLoad(id, ArtifactAggregate.class);
        return ArtifactUpdatedEvent.builder()
-                .companyId(a.getCompanyId())
+               .companyId(a.getCompanyId())
                 .description(a.getDescription())
                 .uri(a.getUri())
                 .id(a.getId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -162,6 +179,7 @@ private final AggregateUtil util;
                 .description(cmd.getDescription())
                 .uri(cmd.getUri())
                 .id(cmd.getId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -186,6 +204,7 @@ private final AggregateUtil util;
                 .artifactIds(a.getArtifactIds())
                 .companyId(a.getCompanyId())
                 .description(a.getDescription())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -195,6 +214,7 @@ private final AggregateUtil util;
                 .artifactIds(cmd.getArtifactIds())
                 .companyId(cmd.getCompanyId())
                 .description(cmd.getDescription())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -205,6 +225,7 @@ private final AggregateUtil util;
                 .artifactIds(a.getArtifactIds())
                 .companyId(a.getCompanyId())
                 .description(a.getDescription())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
     
@@ -215,6 +236,7 @@ private final AggregateUtil util;
                 .artifactIds(cmd.getArtifactIds())
                 .companyId(cmd.getCompanyId())
                 .description(cmd.getDescription())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -224,21 +246,25 @@ private final AggregateUtil util;
         return RequestCreatedEvent.builder()
                 .artifactIds(a.getArtifactIds())
                 .id(a.getId())
+                .requesterId(a.getRequesterId())
                 .requestDate(a.getRequestDate())
                 .requestDetails(a.getRequestDetails())
                 .requestStatus(a.getRequestStatus())
                 .taskId(a.getTaskId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
     public RequestCreatedEvent requestCreateEvent(RequestCreationCmd cmd) {
         return RequestCreatedEvent.builder()
                 .artifactIds(cmd.getArtifactIds())
+                .requesterId(cmd.getRequesterId())
                 .id(cmd.getId())
                 .requestDate(cmd.getRequestDate())
                 .requestDetails(cmd.getRequestDetails())
                 .requestStatus(cmd.getRequestStatus())
                 .taskId(cmd.getTaskId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -251,6 +277,7 @@ private final AggregateUtil util;
                 .requestDetails(a.getRequestDetails())
                 .requestStatus(a.getRequestStatus())
                 .taskId(a.getTaskId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
 
@@ -263,8 +290,64 @@ private final AggregateUtil util;
                 .requestDetails(cmd.getRequestDetails())
                 .requestStatus(cmd.getRequestStatus())
                 .taskId(cmd.getTaskId())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
                 .build();
     }
+    
+    
+    public RequestTrackingCreatedEvent requestTrackingCreatedEvent(RequestTrackingCreationCmd cmd) {
+        return RequestTrackingCreatedEvent.builder()
+                .id(cmd.getId())
+                .managerId(cmd.getResourceId())
+                .observation(cmd.getObservation())
+                .requestId(cmd.getRequestId())
+                .requestStatus(cmd.getRequestStatus())
+                .trackingTime(cmd.getTrackingTime())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
+                .build();
+    }
+    
+    public RequestTrackingCreatedEvent requestTrackingCreatedEvent(String id) {
+        final RequestTrackingAggregate cmd  = aggregateLoad(id, RequestTrackingAggregate.class);
+        return RequestTrackingCreatedEvent.builder()
+                .id(cmd.getId())
+                .managerId(cmd.getResourceId())
+                .observation(cmd.getObservation())
+                .requestId(cmd.getRequestId())
+                .requestStatus(cmd.getRequestStatus())
+                .trackingTime(cmd.getTrackingTime())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
+                .build();
+    }
+    
+    
+    public RequestTrackingUpdatedEvent requestTrackingUpdatedEvent(RequestTrackingUpdateCmd cmd) {
+        aggregateLoad(cmd.getId(), RequestTrackingAggregate.class);
+        return RequestTrackingUpdatedEvent.builder()
+                .id(cmd.getId())
+                .managerId(cmd.getResourceId())
+                .observation(cmd.getObservation())
+                .requestId(cmd.getRequestId())
+                .requestStatus(cmd.getRequestStatus())
+                .trackingTime(cmd.getTrackingTime())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
+                .build();
+    }
+    
+    public RequestTrackingUpdatedEvent requestTrackingUpdatedEvent(String id) {
+        final RequestTrackingAggregate cmd  = aggregateLoad(id, RequestTrackingAggregate.class);
+        return RequestTrackingUpdatedEvent.builder()
+                .id(cmd.getId())
+                .managerId(cmd.getResourceId())
+                .observation(cmd.getObservation())
+                .requestId(cmd.getRequestId())
+                .requestStatus(cmd.getRequestStatus())
+                .trackingTime(cmd.getTrackingTime())
+                .routingKey(DefaultAMQProperties.DFMS_EVENTS.getRoutingKey())
+                .build();
+    }
+
+
 
     private <T> T aggregateLoad(String id, Class<T> clazz) {
         final Optional<T> result = util.aggregateGet(id, clazz);

@@ -6,12 +6,13 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.axonframework.commandhandling.CommandHandler;
-import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
+import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import com.ia.dfms.commands.creation.RequestCreationCmd;
+import com.ia.dfms.commands.creation.RequestTrackingCreationCmd;
 import com.ia.dfms.commands.deletion.RequestDeletionCmd;
 import com.ia.dfms.commands.update.RequestUpdateCmd;
 import com.ia.dfms.enums.RequestStatus;
@@ -44,15 +45,22 @@ public class RequestAggregate {
 
     @CommandHandler
     public RequestAggregate(RequestCreationCmd cmd, EventBuilder builder) {
-        AggregateLifecycle.apply(builder.requestCreateEvent(cmd));
+        AggregateLifecycle.apply(builder.requestCreateEvent(cmd)).andThen(() -> {
+            try {
+                AggregateLifecycle.createNew(RequestTrackingAggregate.class,
+                        () -> new RequestTrackingAggregate(RequestTrackingCreationCmd.from(cmd), builder));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         log.info("The creation of the request with id [{}] have been successfully executed", cmd.getId());
     }
 
     @EventSourcingHandler
     public void onRequestCreated(RequestCreatedEvent event) {
-        this.id = event.getId();
-        this.taskId = event.getTaskId();
-        this.requesterId = event.getRequesterId();
+        this.id = event.getId().toString();
+        this.taskId = event.getTaskId().toString();
+        this.requesterId = event.getRequesterId().toString();
         this.requestDate = event.getRequestDate();
         this.requestDetails = event.getRequestDetails();
         this.requestStatus = event.getRequestStatus();
@@ -68,9 +76,9 @@ public class RequestAggregate {
 
     @EventSourcingHandler
     public void onRequestUpdate(RequestUpdatedEvent event) {
-        this.id = event.getId();
-        this.taskId = event.getTaskId();
-        this.requesterId = event.getRequesterId();
+        this.id = event.getId().toString();
+        this.taskId = event.getTaskId().toString();
+        this.requesterId = event.getRequesterId().toString();
         this.requestDate = event.getRequestDate();
         this.requestDetails = event.getRequestDetails();
         this.requestStatus = event.getRequestStatus();
@@ -80,13 +88,13 @@ public class RequestAggregate {
 
     @CommandHandler
     public void handleRequestDeletionCmd(RequestDeletionCmd cmd) {
-        AggregateLifecycle.apply(RequestDeletedEvent.builder().requestId(cmd.getRequestId()).build());
+        AggregateLifecycle.apply(RequestDeletedEvent.builder().id(cmd.getRequestId()).build());
         log.info("The deletion of the request with id [{}] have been successfully executed", cmd.getRequestId());
     }
 
     public void onRequestDeleted(RequestDeletedEvent event) {
-        this.id = event.getRequestId();
+        this.id = event.getId().toString();
         AggregateLifecycle.markDeleted();
-        log.info("Deletion event of the Request with id [{}] have been successfully send to the event bus", event.getRequestId());
+        log.info("Deletion event of the Request with id [{}] have been successfully send to the event bus", event.getId());
     }
 }
