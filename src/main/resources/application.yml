@@ -5,7 +5,7 @@ axon:
   amqp:
     exchange: dfms.out.exchange
     durable-messages: true
-    transaction-mode: none
+    transaction-mode: transactional
 external:
   amqp:
     bind:
@@ -19,5 +19,5 @@ spring:
   data:
     mongodb:
       database: ${axon.events.database}
-ùserver:
+server:
   port: 8090
