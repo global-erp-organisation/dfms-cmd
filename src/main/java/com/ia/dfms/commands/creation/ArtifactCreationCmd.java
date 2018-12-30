@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import javax.validation.constraints.NotEmpty;
 
-import org.axonframework.commandhandling.TargetAggregateIdentifier;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 import org.springframework.util.StringUtils;
 
 import com.ia.dfms.aggregates.CompanyAggregate;

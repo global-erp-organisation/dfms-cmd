@@ -2,7 +2,7 @@ package com.ia.dfms.commands.creation;
 
 import java.time.LocalDateTime;
 
-import org.axonframework.commandhandling.TargetAggregateIdentifier;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 import org.bson.types.ObjectId;
 
 import com.ia.dfms.enums.RequestStatus;

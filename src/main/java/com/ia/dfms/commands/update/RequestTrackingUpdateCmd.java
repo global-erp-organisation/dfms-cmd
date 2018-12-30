@@ -3,7 +3,7 @@ package com.ia.dfms.commands.update;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.axonframework.commandhandling.TargetAggregateIdentifier;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 import com.ia.dfms.enums.RequestStatus;
 

@@ -4,14 +4,14 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.axonframework.commandhandling.model.Aggregate;
-import org.axonframework.commandhandling.model.AggregateNotFoundException;
-import org.axonframework.commandhandling.model.Repository;
 import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.GenericMessage;
 import org.axonframework.messaging.unitofwork.DefaultUnitOfWork;
 import org.axonframework.messaging.unitofwork.UnitOfWork;
+import org.axonframework.modelling.command.Aggregate;
+import org.axonframework.modelling.command.AggregateNotFoundException;
+import org.axonframework.modelling.command.Repository;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -42,8 +42,7 @@ public class AggregateUtil {
     }
 
     public <T> Repository<T> getRepository(Class<T> clazz) {
-        return new EventSourcingRepository<>(clazz, store);
-        // EventSourcingRepository.builder(clazz).eventStore(store).build();
+        return  EventSourcingRepository.builder(clazz).eventStore(store).build();
     }
 
 }

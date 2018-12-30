@@ -24,8 +24,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.M3</spring-cloud.version>
-        <axonframework-version>3.4.2</axonframework-version>
-        <axonmongo-version>3.4.2</axonmongo-version>
+        <axonframework-version>4.0.3</axonframework-version>
+        <axonmongo-version>4.0</axonmongo-version>
     </properties>
 
     <dependencies>
@@ -53,14 +53,20 @@
             <groupId>org.axonframework</groupId>
             <artifactId>axon-spring-boot-starter</artifactId>
             <version>${axonframework-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.axonframework</groupId>
+                    <artifactId>axon-server-connector</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.axonframework</groupId>
+            <groupId>org.axonframework.extensions.mongo</groupId>
             <artifactId>axon-mongo</artifactId>
             <version>${axonmongo-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.axonframework</groupId>
+            <groupId>org.axonframework.extensions.amqp</groupId>
             <artifactId>axon-amqp</artifactId>
             <version>${axonmongo-version}</version>
         </dependency>
