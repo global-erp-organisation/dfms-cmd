@@ -1,4 +1,4 @@
-package com.ia.dfms.configuration.publisher;
+package com.ia.dfms.configuration;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
