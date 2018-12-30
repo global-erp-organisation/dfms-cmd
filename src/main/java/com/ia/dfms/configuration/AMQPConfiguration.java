@@ -1,6 +1,10 @@
 package com.ia.dfms.configuration;
 
 import org.axonframework.extensions.amqp.AMQPProperties;
+import org.axonframework.extensions.amqp.eventhandling.AMQPMessageConverter;
+import org.axonframework.extensions.amqp.eventhandling.RoutingKeyResolver;
+import org.axonframework.extensions.amqp.eventhandling.legacy.JavaSerializationAMQPMessageConverter;
+import org.axonframework.serialization.Serializer;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -43,4 +47,10 @@ public class AMQPConfiguration {
         admin.declareQueue(defaultEventsQueue());
         admin.declareBinding(defaultBinding());
     }
+    
+    @Bean
+    public AMQPMessageConverter amqpMessageConverter(Serializer serializer, RoutingKeyResolver resolver) {
+        return new JavaSerializationAMQPMessageConverter(serializer, resolver, true);
+    }
+
 }

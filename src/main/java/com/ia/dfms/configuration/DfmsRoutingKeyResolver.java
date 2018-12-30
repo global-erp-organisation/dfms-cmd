@@ -19,12 +19,11 @@ public class DfmsRoutingKeyResolver implements RoutingKeyResolver {
         log.info("Resolving Routing Key");
         final AbtractEvent myEvent = (AbtractEvent) event.getPayload();
         final String customRoutingKey = myEvent.getRoutingKey();
-        if (StringUtils.isEmpty(customRoutingKey) || StringUtils.isBlank(customRoutingKey)) {
-            log.info("no custom routing key found a default routing key will be used.");
-            return DefaultAMQProperties.DFMS_EVENTS.getRoutingKey();
-        } else {
-            log.info("Custom routing key found. value: {}", customRoutingKey);
-            return customRoutingKey;
-        }
+        return isValid(customRoutingKey) ? customRoutingKey : DefaultAMQProperties.DFMS_EVENTS.getRoutingKey();
+    }
+
+    private Boolean isValid(String key) {
+        log.info("Custom routing key found. value: {}", key);
+        return !(StringUtils.isEmpty(key) || StringUtils.isBlank(key));
     }
 }
