@@ -1,0 +1,50 @@
+{
+    "global": {
+        "app_type": "springboot", 
+        "app_ssl_port": 8443,
+        "app_ssl_protocol": "HTTPS",
+        "elb_ssl_protocol": "HTTPS",
+        "loadbalancer": {
+            "https_enabled": true,
+            "http_enabled": true,
+            "ping_protocol": "HTTPS"
+        },
+        "isactive_support": {
+            "enabled": true, 
+            "file": "/opt/cs-media-service/active.txt"
+        }, 
+        "source_repo": "git@ewegithub.sb.karmalab.net:EWE/cs-media-service.git", 
+        "team": "CS-Media-Service",
+        "department": "Tech Content Canada", 
+        "cost_center": "80239", 
+        "loadbalancer": {
+            "timeout": 300
+        }, 
+        "portfolio": "Lodging Supply", 
+        "product_area": "Lodging Content", 
+        "notify": {
+            "email": {
+                "addresses": [
+                    "phoenix@expedia.com"
+                ]
+            }, 
+            "hipchat": {
+                "room": "EWE CS: Phoenix Notifications"
+            }
+        }
+    }, 
+    "eweprod-p": {
+        "instances": {
+            "min_count": 4
+        }
+    }, 
+    "ewetest-int": {
+        "no-auto-delete": true
+    }, 
+    "ewetest-stress": {
+        "no-auto-delete": true
+    }, 
+    "ewetest": {
+        "no-auto-delete": true
+    }
+}

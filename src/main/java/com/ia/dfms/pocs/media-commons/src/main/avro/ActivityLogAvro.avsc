@@ -1,0 +1,35 @@
+{
+   "namespace":"com.expedia.content.media.processing.pipeline.avro",
+   "name":"ActivityLogAvro",
+   "type":"record",
+   "fields":[
+      {
+         "name":"mediaGuid",
+         "type":"string"
+      },
+      {
+         "name":"fileName",
+         "type":"string"
+      },
+      {
+         "name":"activityType",
+         "type":"string"
+      },
+      {
+         "name":"appName",
+         "type":"string"
+      },
+      {
+         "name":"domain",
+         "type":"string"
+      },
+      {
+         "name":"domainId",
+         "type":"string"
+      },
+      {
+         "name":"activityTime",
+         "type":"string"
+      }
+   ]
+}

@@ -1,0 +1,48 @@
+{
+  "eweprod-p":{
+    "us-west-2a":{
+      "iam_instance_profile":"cs-media-service",
+      "size":"c3.large",
+      "elb_https_certificate_arn": "arn:aws:iam::308506315341:server-certificate/cs-media-service.prod-p.expedia.com"
+    },
+    "us-west-2c":{
+      "iam_instance_profile":"cs-media-service",
+      "size":"c3.large",
+      "elb_https_certificate_arn": "arn:aws:iam::308506315341:server-certificate/cs-media-service.prod-p.expedia.com"
+    }
+  },
+  "ewetest-int":{
+    "us-west-2a":{
+      "iam_instance_profile":"cs-media-service",
+      "elb_https_certificate_arn": "arn:aws:iam::408096535527:server-certificate/wildcard.us-west-2.int.expedia.com"
+    },
+    "us-west-2c":{
+      "iam_instance_profile":"cs-media-service",
+      "elb_https_certificate_arn": "arn:aws:iam::408096535527:server-certificate/wildcard.us-west-2.int.expedia.com"
+    }
+  },
+  "ewetest-stress":{
+    "us-west-2a":{
+      "enable_spot":false,
+      "iam_instance_profile":"cs-media-service",
+      "size":"c3.large",
+      "elb_https_certificate_arn": "arn:aws:iam::408096535527:server-certificate/wildcard.us-west-2.stress.expedia.com"
+    },
+    "us-west-2c":{
+      "enable_spot":false,
+      "iam_instance_profile":"cs-media-service",
+      "size":"c3.large",
+      "elb_https_certificate_arn": "arn:aws:iam::408096535527:server-certificate/wildcard.us-west-2.stress.expedia.com"
+    }
+  },
+  "ewetest":{
+    "us-west-2a":{
+      "iam_instance_profile":"cs-media-service",
+      "elb_https_certificate_arn": "arn:aws:iam::408096535527:server-certificate/wildcard.us-west-2.test.expedia.com"
+    },
+    "us-west-2c":{
+      "iam_instance_profile":"cs-media-service",
+      "elb_https_certificate_arn": "arn:aws:iam::408096535527:server-certificate/wildcard.us-west-2.test.expedia.com"
+    }
+  }
+}

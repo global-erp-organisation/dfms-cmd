@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <aop:aspectj-autoproxy/>
+
+    <context:component-scan base-package="com.expedia.content.media.processing.pipeline.retry, expedia.content.solutions.metrics" />
+
+    <bean id="retryableAspect"
+          class="com.expedia.content.media.processing.pipeline.retry.RetryableAspect"
+          factory-method="aspectOf" autowire="byType"/>
+
+    <bean id="retryTemplate" class="org.springframework.retry.support.RetryTemplate">
+        <property name="retryPolicy">
+            <bean
+                    class="org.springframework.retry.policy.ExceptionClassifierRetryPolicy">
+                <property name="policyMap">
+                    <map>
+                        <entry key="java.lang.Exception">
+                            <bean class="org.springframework.retry.policy.SimpleRetryPolicy">
+                                <property name="maxAttempts" value="5"/>
+                            </bean>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="backOffPolicy">
+            <bean class="org.springframework.retry.backoff.FixedBackOffPolicy">
+                <property name="backOffPeriod" value="5"/>
+            </bean>
+        </property>
+    </bean>
+</beans>
